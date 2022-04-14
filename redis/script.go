@@ -9,6 +9,6 @@ local value = redis.call("INCR", key)
 if not value then
   value = 0
 end
-redis.call("EXPIRE", "43534", expire)
+redis.call("EXPIRE", key, expire)
 return value
 `)

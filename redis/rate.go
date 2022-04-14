@@ -41,19 +41,3 @@ func (l *RateLimiter) Allow(item string) (btn bool, err error) {
 	btn = (incr <= l.limit+l.burst)
 	return
 }
-
-func (l *RateLimiter) incr(name string, period time.Duration) (int64, error) {
-	var incr *redis.IntCmd
-	_, err := l.redis.Pipelined(func(pipe redis.Pipeliner) error {
-		incr = pipe.IncrBy(name, 1)
-		pipe.Expire(name, period+10*time.Second)
-		return nil
-	})
-
-	if err != nil {
-		return 0, err
-	}
-
-	rate, err := incr.Result()
-	return rate, err
-}
